@@ -42,11 +42,11 @@ wavelenght=DoubleVar()
 
 N2=int(N/2)
 
-HoleSeparation=10*mm
+HoleSeparation=10*um
 z=300*cm
 Nholes=2
 size_hole=1*mm
-Nhole=15
+Nhole=20
 Fhole=Begin(size_hole,wave,Nhole)
 Fhole=RectAperture(Fhole,W,H)
 
@@ -81,7 +81,7 @@ def propagateField(event):
 def motion(event):
     x=event.xdata;y=event.ydata
     if (x is not None and y is not None and 0<x<N and 0<y<N):
-        v.set('x=%3.2f um, y=%3.2f um\n I=%3.3f [a.u.]' %((-grid_size/2+x*grid_size/N)/um,(-grid_size/2+y*grid_size/N)/um,I[int(x)][int(y)]))
+        v.set('x=%3.2f um, y=%3.2f um\n I=%3.4f [a.u.]' %((-grid_size/2+x*grid_size/N)/um,(-grid_size/2+y*grid_size/N)/um,I[int(x)][int(y)]))
         root.configure(cursor='crosshair')
     else:
         v.set('')
@@ -98,7 +98,7 @@ Scale(  root,
         orient='horizontal',
         label = 'distance [cm]',
         length = 200,
-        from_=0.005, to=10,
+        from_=0.001, to=1,
         resolution = 0.001,
         variable = D,
         cursor="hand2",
