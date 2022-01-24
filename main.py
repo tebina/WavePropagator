@@ -15,7 +15,7 @@ else:
     from tkinter import *
     import tkinter as Tk
 from LightPipes import *
-      
+
 
 root = Tk.Tk()
 root.wm_title("X-Ray spot simulation")
@@ -27,7 +27,7 @@ canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
 
-grid_size = 0.1 * mm
+grid_size = 100 * um
 N=200
 
 z=20*cm
@@ -40,12 +40,26 @@ D=DoubleVar()
 wavelenght=DoubleVar()
 
 
+N2=int(N/2)
+
+HoleSeparation=10*mm
+z=300*cm
+Nholes=2
+size_hole=1*mm
+Nhole=15
+Fhole=Begin(size_hole,wave,Nhole)
+Fhole=RectAperture(Fhole,W,H)
+
+
+
+
 def propagateField(event):
     global I
     wave=wavelenght.get()*nm
     z=D.get()*cm
     F=Begin(grid_size,wave,N)
-    F= RectAperture(F,W,H)
+    #F= RectAperture(F,W,H)
+    F= RowOfFields(F, Fhole, Nholes, HoleSeparation)
     F = Propagate (F, z)
     I = Intensity(F)
     ax1.clear()
@@ -54,10 +68,20 @@ def propagateField(event):
     canvas.draw()
 
 
+#def holeGenerator():
+ #   Fhole=Begin(grid_size,wave,N)
+  #  Fhole= RectAperture(Fhole,W,H)
+   # return Fhole
+
+    
+    
+    
+    
+    
 def motion(event):
     x=event.xdata;y=event.ydata
     if (x is not None and y is not None and 0<x<N and 0<y<N):
-        v.set('x=%3.2f mm, y=%3.2f mm\n I=%3.3f [a.u.]' %((-grid_size/2+x*grid_size/N)/mm,(-grid_size/2+y*grid_size/N)/mm,I[int(x)][int(y)]))
+        v.set('x=%3.2f um, y=%3.2f um\n I=%3.3f [a.u.]' %((-grid_size/2+x*grid_size/N)/um,(-grid_size/2+y*grid_size/N)/um,I[int(x)][int(y)]))
         root.configure(cursor='crosshair')
     else:
         v.set('')
@@ -74,7 +98,7 @@ Scale(  root,
         orient='horizontal',
         label = 'distance [cm]',
         length = 200,
-        from_=0.5, to=10,
+        from_=0.005, to=10,
         resolution = 0.001,
         variable = D,
         cursor="hand2",
