@@ -32,8 +32,8 @@ N=200
 
 z=20*cm
 wave = 100*nm
-W = 6 * um
-H = 6 * um
+W = 5 * um
+H = 5 * um
 
 
 D=DoubleVar()
@@ -42,7 +42,7 @@ wavelenght=DoubleVar()
 
 def propagateField(event):
     global I
-    wave=wavelenght.get()*nm
+    wave=wavelenght.get()*nm*mm
     z=D.get()*cm
     F=Begin(grid_size,wave,N)
     F= RectAperture(F,W,H)
@@ -74,7 +74,7 @@ Scale(  root,
         orient='horizontal',
         label = 'distance [cm]',
         length = 200,
-        from_=0.5, to=10,
+        from_=50, to=100,
         resolution = 0.001,
         variable = D,
         cursor="hand2",
@@ -83,9 +83,9 @@ Scale(  root,
 Scale(  root,
         takefocus = 1,
         orient='horizontal',
-        label = 'wavelenght [nm]',
+        label = 'wavelenght [pm]',
         length = 200,
-        from_=1, to=100,
+        from_=1, to=10000,
         resolution = 0.01,
         variable = wavelenght,
         cursor="hand2",
