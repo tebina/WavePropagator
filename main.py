@@ -27,25 +27,24 @@ canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
 
-grid_size = 100 * um
-N=200
+grid_size = 200 * um
+N=100
 
-z=20*cm
+z=50*um
 wave = 100*nm
-W = 6 * um
-H = 6 * um
+W = 5 * um
+H = 5 * um
 
 
 D=DoubleVar()
 wavelenght=DoubleVar()
+HoleSeparation= DoubleVar()
 
 
-N2=int(N/2)
-
-HoleSeparation=10*um
+#HoleSeparation=10*um
 z=300*cm
 Nholes=2
-size_hole=1*mm
+size_hole=10*um
 Nhole=20
 Fhole=Begin(size_hole,wave,Nhole)
 Fhole=RectAperture(Fhole,W,H)
@@ -55,16 +54,17 @@ Fhole=RectAperture(Fhole,W,H)
 
 def propagateField(event):
     global I
-    wave=wavelenght.get()*nm
-    z=D.get()*cm
+    wave=wavelenght.get()*nm*mm
+    z=D.get()*um
+    hole_d = HoleSeparation.get()*um
     F=Begin(grid_size,wave,N)
     #F= RectAperture(F,W,H)
-    F= RowOfFields(F, Fhole, Nholes, HoleSeparation)
+    F= RowOfFields(F, Fhole, Nholes, hole_d)
     F = Propagate (F, z)
     I = Intensity(F)
     ax1.clear()
     ax1.contourf(I,50,cmap='hot'); ax1.axis('on'); ax1.axis('equal')
-    ax1.set_title('Intensity distribution') 
+    ax1.set_title('Intensity distribution')
     canvas.draw()
 
 
@@ -96,9 +96,9 @@ def _quit():
 Scale(  root,
         takefocus = 1,
         orient='horizontal',
-        label = 'distance [cm]',
+        label = 'distance [um]',
         length = 200,
-        from_=0.001, to=1,
+        from_=40, to=5000,
         resolution = 0.001,
         variable = D,
         cursor="hand2",
@@ -107,13 +107,25 @@ Scale(  root,
 Scale(  root,
         takefocus = 1,
         orient='horizontal',
-        label = 'wavelenght [nm]',
+        label = 'wavelenght [pm]',
         length = 200,
-        from_=1, to=100,
+        from_=1, to=10000,
         resolution = 0.01,
         variable = wavelenght,
         cursor="hand2",
         command = propagateField).pack()
+
+Scale(  root,
+        takefocus = 1,
+        orient='horizontal',
+        label = 'hole separation [um]',
+        length = 200,
+        from_=10, to=40,
+        resolution = 0.01,
+        variable = HoleSeparation,
+        cursor="hand2",
+        command = propagateField).pack()
+
 
 Button( root,
         width = 24,
