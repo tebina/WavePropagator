@@ -55,12 +55,12 @@ def propagateField(event):
     ax1.clear()
     ax1.contourf(I,50,cmap='hot'); ax1.axis('on'); ax1.axis('equal')
     ax1.set_title('Intensity distribution') 
+    ax2.clear()
     ax2.plot(x,I[int(N/2)])
     ax2.set_xlabel('x [mm]')
     ax2.set_ylabel('Intensity [a.u.]')
     ax2.grid('on')
     canvas.draw()
-    ax2.clear()
 
 
 def motion(event):
