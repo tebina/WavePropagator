@@ -22,7 +22,9 @@ root.wm_title("X-Ray spot simulation")
 root.wm_protocol("WM_DELETE_WINDOW", root.quit)
 
 fig=plt.figure(figsize=(6,4))
-ax1 = fig.add_subplot(111)
+ax1 = fig.add_subplot(121)
+ax2 = fig.add_subplot(122)
+
 canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
@@ -62,9 +64,17 @@ def propagateField(event):
     F= RowOfFields(F, Fhole, Nholes, hole_d)
     F = Propagate (F, z)
     I = Intensity(F)
+    x = []
+    for i in range(N):
+        x.append((-grid_size/2+i*grid_size/N)/mm)
     ax1.clear()
     ax1.contourf(I,50,cmap='hot'); ax1.axis('on'); ax1.axis('equal')
-    ax1.set_title('Intensity distribution')
+    ax1.set_title('Intensity distribution') 
+    ax2.clear()
+    ax2.plot(x,I[int(N/2)])
+    ax2.set_xlabel('x [mm]')
+    ax2.set_ylabel('Intensity [a.u.]')
+    ax2.grid('on')
     canvas.draw()
 
 
