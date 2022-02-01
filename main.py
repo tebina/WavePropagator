@@ -22,7 +22,8 @@ root.wm_title("X-Ray spot simulation")
 root.wm_protocol("WM_DELETE_WINDOW", root.quit)
 
 fig=plt.figure(figsize=(6,4))
-ax1 = fig.add_subplot(111)
+ax1 = fig.add_subplot(121)
+ax2 = fig.add_subplot(122)
 canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
@@ -43,15 +44,23 @@ wavelenght=DoubleVar()
 def propagateField(event):
     global I
     wave=wavelenght.get()*nm*mm
-    z=D.get()*cm
+    z=D.get()*um
     F=Begin(grid_size,wave,N)
     F= RectAperture(F,W,H)
     F = Propagate (F, z)
     I = Intensity(F)
+    x = []
+    for i in range(N):
+        x.append((-grid_size/2+i*grid_size/N)/mm)
     ax1.clear()
     ax1.contourf(I,50,cmap='hot'); ax1.axis('on'); ax1.axis('equal')
     ax1.set_title('Intensity distribution') 
+    ax2.plot(x,I[int(N/2)])
+    ax2.set_xlabel('x [mm]')
+    ax2.set_ylabel('Intensity [a.u.]')
+    ax2.grid('on')
     canvas.draw()
+    ax2.clear()
 
 
 def motion(event):
@@ -72,9 +81,9 @@ def _quit():
 Scale(  root,
         takefocus = 1,
         orient='horizontal',
-        label = 'distance [cm]',
+        label = 'distance [um]',
         length = 200,
-        from_=50, to=100,
+        from_=50, to=10000,
         resolution = 0.001,
         variable = D,
         cursor="hand2",
