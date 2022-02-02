@@ -30,7 +30,7 @@ canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
 
 grid_size = 200 * um
-N=100
+N=200
 
 z=50*um
 wave = 100*nm
@@ -42,16 +42,7 @@ D=DoubleVar()
 wavelenght=DoubleVar()
 HoleSeparation= DoubleVar()
 
-
-#HoleSeparation=10*um
-z=300*cm
-Nholes=2
-size_hole=10*um
-Nhole=20
-Fhole=Begin(size_hole,wave,Nhole)
-Fhole=RectAperture(Fhole,W,H)
-
-
+F=Begin(grid_size,wave,N)
 
 
 def propagateField(event):
@@ -59,10 +50,11 @@ def propagateField(event):
     wave=wavelenght.get()*nm*mm
     z=D.get()*um
     hole_d = HoleSeparation.get()*um
-    F=Begin(grid_size,wave,N)
-    #F= RectAperture(F,W,H)
-    F= RowOfFields(F, Fhole, Nholes, hole_d)
-    F = Propagate (F, z)
+    #F1= RectAperture(F,W,H,-hole_d/2,0,0)
+    #F2= RectAperture(F,W,H,hole_d/2,0,0)
+    #F = BeamMix(F1,F2)
+    #F= RowOfFields(F, Fhole, Nholes, hole_d)
+    F = Propagate (resultField, z)
     I = Intensity(F)
     x = []
     for i in range(N):
@@ -76,14 +68,6 @@ def propagateField(event):
     ax2.set_ylabel('Intensity [a.u.]')
     ax2.grid('on')
     canvas.draw()
-
-
-#def holeGenerator():
- #   Fhole=Begin(grid_size,wave,N)
-  #  Fhole= RectAperture(Fhole,W,H)
-   # return Fhole
-
-    
     
     
     
@@ -101,6 +85,32 @@ def motion(event):
 def _quit():
     root.quit()
     
+def fieldGenerator(numberHole):
+    global resultField
+    for i in range (numberHole):
+        holeType = input ('Aperture type for hole number ' + str(i+1)+' (C for circle and R for rectangle): ')
+        if holeType == "C":
+            circleRadius = np.int64(input ("Type the circle radius in um: "))/um
+            xShift = np.int64(input ("Type the circle offset in x axis in um: "))/um
+            yShift = np.int64(input ("Type the circle offset in y axis in um: "))/um
+            tempField = CircAperture(F,circleRadius,xShift,yShift)
+        elif holeType == "R":
+            squareWidth = np.int64(input ("Type the width of the square in um: "))/um
+            squareHeight = np.int64(input ("Type the height of the square in um: "))/um
+            xShift = np.int64(input ("Type the square offset in x axis in um: "))/um
+            yShift = np.int64(input ("Type the square offset in y axis in um: "))/um
+            squareAngle = np.int64(input ("Type the angle of the square in degrees: "))
+            tempField = RectAperture(F,squareWidth,squareHeight,xShift,yShift,squareAngle)
+        if i == 0:
+            resultField = tempField
+        else:
+            resultField = BeamMix(resultField,tempField)
+        
+    
+
+
+
+
 
 
 Scale(  root,
@@ -130,7 +140,7 @@ Scale(  root,
         orient='horizontal',
         label = 'hole separation [um]',
         length = 200,
-        from_=10, to=40,
+        from_=40, to=0,
         resolution = 0.01,
         variable = HoleSeparation,
         cursor="hand2",
@@ -146,8 +156,24 @@ Button( root,
 
 Label(root, textvariable=v).pack()
 
-cid = fig.canvas.mpl_connect('motion_notify_event', motion)
+#cid = fig.canvas.mpl_connect('motion_notify_event', motion)
 
-propagateField(0)
-root.mainloop()
-root.destroy()
+#propagateField(0)
+#root.mainloop()
+#root.destroy()
+
+
+def main():
+    numberHole = input("Type the number of holes wanted :  ")
+    F = fieldGenerator (int(numberHole))
+    cid = fig.canvas.mpl_connect('motion_notify_event', motion)
+    propagateField(0)
+
+    root.mainloop()
+    root.destroy()
+
+
+
+
+if __name__ == "__main__":
+    main()
