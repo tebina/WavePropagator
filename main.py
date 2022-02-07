@@ -29,10 +29,9 @@ canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
 
-grid_size = 200 * um
+grid_size = 50 * um
 N=200
 
-z=50*um
 wave = 100*nm
 W = 5 * um
 H = 5 * um
@@ -49,11 +48,13 @@ def propagateField(event):
     wave=wavelenght.get()*nm*mm
     z=D.get()*um
     hole_d = HoleSeparation.get()*um
-    #F1= RectAperture(F,W,H,-hole_d/2,0,0)
-    #F2= CircAperture(theField,2*um,2*um,2*um)
-    #F = BeamMix(F1,F2)
+    theField = Begin(grid_size,wave,N)
+
+    F1= RectAperture(theField,W,H,-hole_d/2,0,0)
+    F2= CircAperture(theField,2*um,2*um,2*um)
+    F = BeamMix(F1,F2)
     #F= RowOfFields(F, Fhole, Nholes, hole_d)
-    F = Propagate (theField, z)
+    F = Propagate (F, z)
     I = Intensity(F)
     x = []
     for i in range(N):
@@ -83,7 +84,7 @@ def motion(event):
 
 def _quit():
     root.quit()
-    
+'''    
 def fieldGenerator(numberHole):
     resultField = Begin(grid_size,wave,N)
     for i in range (numberHole):
@@ -105,7 +106,7 @@ def fieldGenerator(numberHole):
         else:
             resultField = BeamMix(resultField,tempField)
     return resultField
-    
+'''    
 
 
 
@@ -163,9 +164,8 @@ Label(root, textvariable=v).pack()
 
 
 def main():
-    global theField
-    numberHole = input("Type the number of holes wanted :  ")
-    theField = fieldGenerator (int(numberHole))
+    #numberHole = input("Type the number of holes wanted :  ")
+    #theField = fieldGenerator (int(numberHole))
     cid = fig.canvas.mpl_connect('motion_notify_event', motion)
     propagateField(0)
 
