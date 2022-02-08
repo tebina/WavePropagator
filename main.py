@@ -3,10 +3,16 @@ import matplotlib as matplotlib
 
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+
+
 
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+
+
 
 if sys.version_info[0] < 3:
     from Tkinter import *
@@ -23,14 +29,14 @@ root.wm_protocol("WM_DELETE_WINDOW", root.quit)
 
 fig=plt.figure(figsize=(6,4))
 ax1 = fig.add_subplot(121)
-ax2 = fig.add_subplot(122)
+ax2 = fig.add_subplot(122,projection = '3d')
 
 canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
 
-grid_size = 50 * um
-N=200
+grid_size = 30 * um
+N=100
 
 wave = 100*nm
 W = 5 * um
@@ -51,23 +57,30 @@ def propagateField(event):
     theField = Begin(grid_size,wave,N)
 
     F1= RectAperture(theField,W,H,-hole_d/2,0,0)
-    F2= CircAperture(theField,2*um,2*um,2*um)
-    F = BeamMix(F1,F2)
+    F2= CircAperture(theField,3*um,2*um,2*um)
+    F3= RectAperture(theField,W,H,0,-hole_d/2,0)
+
+    F = BeamMix(BeamMix(F1,F2),F3)
     #F= RowOfFields(F, Fhole, Nholes, hole_d)
     F = Propagate (F, z)
     I = Intensity(F)
     x = []
+    y = []
     for i in range(N):
         x.append((-grid_size/2+i*grid_size/N)/mm)
+        y.append((-grid_size/2+i*grid_size/N)/mm)
+    X,Y = np.meshgrid(x,y)
     ax1.clear()
     ax1.contourf(I,50,cmap='hot'); ax1.axis('on'); ax1.axis('equal')
     ax1.set_title('Intensity distribution') 
     ax2.clear()
-    ax2.plot(x,I[int(N/2)])
+    ax2.scatter(X,Y,I)
     ax2.set_xlabel('x [mm]')
-    ax2.set_ylabel('Intensity [a.u.]')
+    ax2.set_ylabel('y [mm]')
+    ax2.set_zlabel('Intensity [a.u.]')
     ax2.grid('on')
     canvas.draw()
+    
     
     
     
