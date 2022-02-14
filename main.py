@@ -35,7 +35,7 @@ canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
 
-grid_size = 30 * um
+grid_size = 120 * um
 N=100
 
 wave = 100*nm
@@ -44,23 +44,34 @@ H = 5 * um
 
 
 D=DoubleVar()
-wavelenght=DoubleVar()
+energy=DoubleVar()
 HoleSeparation= DoubleVar()
-
-
+plankC = 6.626e-34
+velocityC= 3e8
+kev = 1.6e-16
 
 def propagateField(event):
     global I
-    wave=wavelenght.get()*nm*mm
-    z=D.get()*um
+    energyK=energy.get()
+
+    wave = (plankC * velocityC)/(kev * energyK)
+    print ("wavelenght in nm is : ", wave/nm)
+    #z=D.get()*um
+    z=D.get()
     hole_d = HoleSeparation.get()*um
     theField = Begin(grid_size,wave,N)
 
-    F1= RectAperture(theField,W,H,-hole_d/2,0,0)
-    F2= CircAperture(theField,3*um,2*um,2*um)
-    F3= RectAperture(theField,W,H,0,-hole_d/2,0)
+    #F1= RectAperture(theField,W,H,-hole_d/2,0,0)
+    F1= CircAperture(theField,2.5*um,0*um,18*um)
+    F2= CircAperture(theField,2.5*um,0*um,-18*um)
+    #F3= RectAperture(theField,W,H,0,-hole_d/2,0)
 
-    F = BeamMix(BeamMix(F1,F2),F3)
+    
+    
+    #F = BeamMix(BeamMix(F1,F2),F3)
+    F = BeamMix(F1,F2)
+    
+    
     #F= RowOfFields(F, Fhole, Nholes, hole_d)
     F = Propagate (F, z)
     I = Intensity(F)
@@ -129,9 +140,13 @@ def fieldGenerator(numberHole):
 Scale(  root,
         takefocus = 1,
         orient='horizontal',
-        label = 'distance [um]',
+        #label = 'distance [um]',
+        label = 'distance [m]',
+
         length = 200,
-        from_=40, to=5000,
+        #from_=40, to=5000,
+        from_=1, to=2,
+
         resolution = 0.001,
         variable = D,
         cursor="hand2",
@@ -140,11 +155,11 @@ Scale(  root,
 Scale(  root,
         takefocus = 1,
         orient='horizontal',
-        label = 'wavelenght [pm]',
+        label = 'Beam energy [kev]',
         length = 200,
-        from_=1, to=10000,
-        resolution = 0.01,
-        variable = wavelenght,
+        from_=6, to=16,
+        resolution = 1,
+        variable = energy,
         cursor="hand2",
         command = propagateField).pack()
 
