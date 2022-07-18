@@ -30,15 +30,14 @@ root.wm_protocol("WM_DELETE_WINDOW", root.quit)
 fig=plt.figure(figsize=(6,4))
 ax1 = fig.add_subplot(121)
 ax2 = fig.add_subplot(122,projection = '3d')
-
 canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
 
 grid_size = 120 * um
-N=100
+N=200
 
-wave = 100*nm
+wave = 120*nm
 W = 5 * um
 H = 5 * um
 
@@ -62,8 +61,8 @@ def propagateField(event):
     theField = Begin(grid_size,wave,N)
 
     #F1= RectAperture(theField,W,H,-hole_d/2,0,0)
-    F1= CircAperture(theField,2.5*um,0*um,18*um)
-    F2= CircAperture(theField,2.5*um,0*um,-18*um)
+    F1= CircAperture(theField,5*um,0*um, 20*um)
+    F2= CircAperture(theField,5*um,0*um,-18*um)
     #F3= RectAperture(theField,W,H,0,-hole_d/2,0)
 
     
@@ -74,7 +73,7 @@ def propagateField(event):
     
     #F= RowOfFields(F, Fhole, Nholes, hole_d)
     F = Propagate (F, z)
-    I = Intensity(F)
+    I = Intensity(F,1)
     x = []
     y = []
     for i in range(N):
@@ -82,7 +81,7 @@ def propagateField(event):
         y.append((-grid_size/2+i*grid_size/N)/mm)
     X,Y = np.meshgrid(x,y)
     ax1.clear()
-    ax1.contourf(I,50,cmap='hot'); ax1.axis('on'); ax1.axis('equal')
+    ax1.contourf(np.log10(I),50,cmap='rainbow'); ax1.axis('on'); ax1.axis('equal')
     ax1.set_title('Intensity distribution') 
     ax2.clear()
     ax2.scatter(X,Y,I)
@@ -108,6 +107,8 @@ def motion(event):
 
 def _quit():
     root.quit()
+
+    
 '''    
 def fieldGenerator(numberHole):
     resultField = Begin(grid_size,wave,N)
@@ -145,7 +146,7 @@ Scale(  root,
 
         length = 200,
         #from_=40, to=5000,
-        from_=1, to=2,
+        from_=1.4, to=1.45,
 
         resolution = 0.001,
         variable = D,
