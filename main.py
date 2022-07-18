@@ -29,11 +29,7 @@ root.wm_protocol("WM_DELETE_WINDOW", root.quit)
 
 fig=plt.figure(figsize=(6,4))
 ax1 = fig.add_subplot(121)
-<<<<<<< HEAD
-ax2 = fig.add_subplot(122)
-=======
 ax2 = fig.add_subplot(122,projection = '3d')
->>>>>>> work
 canvas = FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 v=StringVar()
@@ -41,12 +37,7 @@ v=StringVar()
 grid_size = 120 * um
 N=200
 
-<<<<<<< HEAD
-z=20*cm
-wave = 100*nm
-=======
 wave = 120*nm
->>>>>>> work
 W = 5 * um
 H = 5 * um
 
@@ -60,17 +51,6 @@ kev = 1.6e-16
 
 def propagateField(event):
     global I
-<<<<<<< HEAD
-    wave=wavelenght.get()*nm*mm
-    z=D.get()*um
-    F=Begin(grid_size,wave,N)
-    F= RectAperture(F,W,H)
-    F = Propagate (F, z)
-    I = Intensity(F)
-    x = []
-    for i in range(N):
-        x.append((-grid_size/2+i*grid_size/N)/mm)
-=======
     energyK=energy.get()
 
     wave = (plankC * velocityC)/(kev * energyK)
@@ -100,21 +80,14 @@ def propagateField(event):
         x.append((-grid_size/2+i*grid_size/N)/mm)
         y.append((-grid_size/2+i*grid_size/N)/mm)
     X,Y = np.meshgrid(x,y)
->>>>>>> work
     ax1.clear()
     ax1.contourf(np.log10(I),50,cmap='rainbow'); ax1.axis('on'); ax1.axis('equal')
     ax1.set_title('Intensity distribution') 
     ax2.clear()
-<<<<<<< HEAD
-    ax2.plot(x,I[int(N/2)])
-    ax2.set_xlabel('x [mm]')
-    ax2.set_ylabel('Intensity [a.u.]')
-=======
     ax2.scatter(X,Y,I)
     ax2.set_xlabel('x [mm]')
     ax2.set_ylabel('y [mm]')
     ax2.set_zlabel('Intensity [a.u.]')
->>>>>>> work
     ax2.grid('on')
     canvas.draw()
     
@@ -168,11 +141,6 @@ def fieldGenerator(numberHole):
 Scale(  root,
         takefocus = 1,
         orient='horizontal',
-<<<<<<< HEAD
-        label = 'distance [um]',
-        length = 200,
-        from_=50, to=10000,
-=======
         #label = 'distance [um]',
         label = 'distance [m]',
 
@@ -180,7 +148,6 @@ Scale(  root,
         #from_=40, to=5000,
         from_=1.4, to=1.45,
 
->>>>>>> work
         resolution = 0.001,
         variable = D,
         cursor="hand2",
@@ -189,11 +156,6 @@ Scale(  root,
 Scale(  root,
         takefocus = 1,
         orient='horizontal',
-<<<<<<< HEAD
-        label = 'wavelenght [pm]',
-        length = 200,
-        from_=1, to=10000,
-=======
         label = 'Beam energy [kev]',
         length = 200,
         from_=6, to=16,
@@ -208,7 +170,6 @@ Scale(  root,
         label = 'hole separation [um]',
         length = 200,
         from_=40, to=0,
->>>>>>> work
         resolution = 0.01,
         variable = HoleSeparation,
         cursor="hand2",
